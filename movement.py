@@ -30,18 +30,18 @@ class movement:
 
         for i in range(num_positions):
 
-            ax = fig.add_subplot(rows,cols, i+1) ## creating number of subplots in rowxXcols
+            axis = fig.add_subplot(rows,cols, i+1) ## creating number of subplots in rowxXcols
 
             if plottype == 1:
                 pos_data = position[i]
-                ax.plot(pos_data[:, 0], pos_data[:, 1])
-                ax.axis('equal')
+                axis.plot(pos_data[:, 0], pos_data[:, 1])
+                axis.axis('equal')
             elif plottype == 2:
                 time_data = time[i]
                 pos_data = position[i]
-                ax.plot(time_data, pos_data)
+                axis.plot(time_data, pos_data)
             if i == num_positions - 1:
-                ax.legend(['x', 'y'])
+                axis.legend(['x', 'y'])
             else:
                 raise ValueError('Unknown plot type')
 
