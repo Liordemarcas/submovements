@@ -89,4 +89,6 @@ class movement:
                 position_filtered = filtfilt(b, a, position[trial_num], axis=0)
                 velocity[trial_num] = np.vstack([[0, 0], np.diff(position_filtered, axis=0) / dt])
 
+                time=time[1]
+                velocity=velocity[1]
         return position_filtered, velocity, time
