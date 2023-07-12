@@ -41,7 +41,7 @@ plotvelocity(velocity,time);
 
 from plot import plot_position, plot_velocity
 
-# plot_position(position_filtered, time)
+plot_position(position_filtered, time)
 plot_velocity(velocity, time)
 
 """
