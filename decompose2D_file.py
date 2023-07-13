@@ -1,6 +1,6 @@
 import numpy as np
 #from submovment_file import submovment
-from calculateerrorMJ2D_file import calculateerrorMJ2D
+from calculateerrorMJ2D__file import calculateerrorMJ2D
 from scipy.optimize import minimize
 
 
@@ -31,7 +31,7 @@ def decompose2D(time: np.ndarry,vel: np.ndarray,numsubmovements: int = 4,xrng: i
     [t0 D Ax Ay]. If there are multiple submovements, it will be have a
     length of 4*numsubmovements
 
-    bestVelocity is the velocity profile coresponding to the best values
+    bestVelocity is the velocity profile coresponding to the best values (UNIMPLANTED!!!)
 
     Jason Friedman, 2021
     www.curiousjason.com
@@ -47,6 +47,9 @@ def decompose2D(time: np.ndarry,vel: np.ndarray,numsubmovements: int = 4,xrng: i
     if vel.shape[1] != time.size:
         raise ValueError('vel must match time')
     
+    # calculate tangential velocity
+    tangvel = np.sqrt(vel[1,:]**2 + vel[2,:]**2)
+        
     lower_bounds = np.array([0,                          0.167  , xrng[0], yrng[0]])
     upper_bounds = np.array([max(time[-1]-0.167,0.1),    1.     , xrng[1], yrng[1]])
     #submovment:             start,                     duration, Xpos,    Ypos
@@ -60,8 +63,11 @@ def decompose2D(time: np.ndarry,vel: np.ndarray,numsubmovements: int = 4,xrng: i
     all_lower_bounds = np.empty(shape=(numsubmovements,parm_per_sub),dtype=float) # lower bound for each parameter
     all_upper_bounds = np.empty(shape=(numsubmovements,parm_per_sub),dtype=float) # upper bound for each parameter
 
+    # initate best error found
+    bestError = np.inf
+    
     # try optimazation 20 times, select the time with least error
-    for iTry in range(1,20,1):
+    for iTry in range(20):
         # create inital parameters for each submovement
         for iSub in range(numsubmovements):
             init_parm[iSub,:] = lower_bounds + (upper_bounds - lower_bounds)*np.random.rand(1,parm_per_sub)
@@ -72,9 +78,6 @@ def decompose2D(time: np.ndarry,vel: np.ndarray,numsubmovements: int = 4,xrng: i
             #all_subs[iSub].lower_bounds = lower_bounds.copy()
             #all_subs[iSub].lower_bounds[0] = (iSub-1) * 0.167
             #all_subs[iSub].upper_bounds = upper_bounds
-        
-        # calculate tangential velocity
-        tangvel = np.sqrt(vel[1,:]**2 + vel[2,:]**2)
 
         # function to minimaize
         error_fun = lambda parms: calculateerrorMJ2D(parms, time, vel, tangvel)
@@ -85,4 +88,22 @@ def decompose2D(time: np.ndarry,vel: np.ndarray,numsubmovements: int = 4,xrng: i
                        method='trust-constr',
                        bounds=tuple(zip(all_lower_bounds.flatten(),all_upper_bounds.flatten())),
                        options = {'maxiter':5000, 'max_nfev': 10**13})
+        
+        # calculate error for the result found
+        epsilon = error_fun(res.x)
+
+        # save result if error is smaller than best found
+        if epsilon < bestError:
+            bestError = epsilon
+            bestParameters = res.x
+
+    # orginaze parameters to so every submovment is a row    
+    final_parms = bestParameters.reshape((numsubmovements,parm_per_sub))
+    
+    return bestError, final_parms
+
+
+
+
+
         
