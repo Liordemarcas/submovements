@@ -2,10 +2,10 @@ import numpy as np
 #from submovment_file import submovment
 from calculateerrorMJ2D__file import calculateerrorMJ2D
 from scipy.optimize import minimize
+from typing import Tuple
 
-
-def decompose2D(time: np.ndarry,vel: np.ndarray,numsubmovements: int = 4,xrng: int = (-5., 5.),yrng: int = (0.1, 5)) \
-    -> tuple(float,np.ndarray,np.narray):
+def decompose2D(time: np.ndarray,vel: np.ndarray,nSubmovements: int = 4,xrng: int = (-5., 5.),yrng: int = (0.1, 5)) \
+    -> Tuple[float,np.ndarray,np.ndarray]:
     """
     DECOMPOSE - decompose two dimensional movement into submovements using the velocity profiles
 
@@ -38,38 +38,38 @@ def decompose2D(time: np.ndarry,vel: np.ndarray,numsubmovements: int = 4,xrng: i
     """
 
     # Input validation
-    if time.shape[0] > 1:
-        raise ValueError('time must be a 1*N vector')
+    if time.ndim > 1:
+        raise ValueError('time must be a 1D')
 
-    if vel.shape[0] != 2:
-        raise ValueError('vel must be an 2*N matrix')
+    if vel.shape[1] != 2:
+        raise ValueError('vel must be an N*2 ndarray')
 
-    if vel.shape[1] != time.size:
+    if vel.shape[0] != time.size:
         raise ValueError('vel must match time')
-    
+
     # calculate tangential velocity
-    tangvel = np.sqrt(vel[1,:]**2 + vel[2,:]**2)
-        
+    tangvel = np.sqrt(vel[:,0]**2 + vel[:,1]**2)
+
     lower_bounds = np.array([0,                          0.167  , xrng[0], yrng[0]])
     upper_bounds = np.array([max(time[-1]-0.167,0.1),    1.     , xrng[1], yrng[1]])
     #submovment:             start,                     duration, Xpos,    Ypos
 
     if np.any(lower_bounds > upper_bounds):
         raise ValueError('Lower bounds exceed upper bound - infeasible')
-    
+
     # initiate matrices for parameters and bounds for each submovment
     parm_per_sub = 4 # hard coded - can be change if diffrent methods are used
-    init_parm = np.empty(shape=(numsubmovements,parm_per_sub),dtype=float) # submovement parameters
-    all_lower_bounds = np.empty(shape=(numsubmovements,parm_per_sub),dtype=float) # lower bound for each parameter
-    all_upper_bounds = np.empty(shape=(numsubmovements,parm_per_sub),dtype=float) # upper bound for each parameter
+    init_parm = np.empty(shape=(nSubmovements,parm_per_sub),dtype=float) # submovement parameters
+    all_lower_bounds = np.empty(shape=(nSubmovements,parm_per_sub),dtype=float) # lower bound for each parameter
+    all_upper_bounds = np.empty(shape=(nSubmovements,parm_per_sub),dtype=float) # upper bound for each parameter
 
     # initate best error found
-    bestError = np.inf
-    
+    best_error = np.inf
+
     # try optimazation 20 times, select the time with least error
     for iTry in range(20):
         # create inital parameters for each submovement
-        for iSub in range(numsubmovements):
+        for iSub in range(nSubmovements):
             init_parm[iSub,:] = lower_bounds + (upper_bounds - lower_bounds)*np.random.rand(1,parm_per_sub)
             all_upper_bounds[iSub,:] = upper_bounds.copy()
             all_lower_bounds[iSub,:] = lower_bounds.copy()
@@ -80,30 +80,28 @@ def decompose2D(time: np.ndarry,vel: np.ndarray,numsubmovements: int = 4,xrng: i
             #all_subs[iSub].upper_bounds = upper_bounds
 
         # function to minimaize
-        error_fun = lambda parms: calculateerrorMJ2D(parms, time, vel, tangvel)
+        #error_fun = lambda parms: calculateerrorMJ2D(parms, time, vel, tangvel)
+        def error_fun(parms):
+            epsilon = calculateerrorMJ2D(parms, time, vel, tangvel)
+            return epsilon
 
         # run the optimazer
         res = minimize(error_fun,
-                       x0=init_parm.flatten(), 
+                       x0=init_parm.flatten(),
                        method='trust-constr',
                        bounds=tuple(zip(all_lower_bounds.flatten(),all_upper_bounds.flatten())),
-                       options = {'maxiter':5000, 'max_nfev': 10**13})
-        
+                       options = {'maxiter':5000})
+
         # calculate error for the result found
         epsilon = error_fun(res.x)
 
         # save result if error is smaller than best found
-        if epsilon < bestError:
-            bestError = epsilon
-            bestParameters = res.x
+        if epsilon < best_error:
+            best_error = epsilon
+            best_parameters = res.x
 
-    # orginaze parameters to so every submovment is a row    
-    final_parms = bestParameters.reshape((numsubmovements,parm_per_sub))
-    
-    return bestError, final_parms
+    # orginaze parameters to so every submovment is a row
+    final_parms = best_parameters.reshape((nSubmovements,parm_per_sub))
 
-
-
-
-
+    return best_error, final_parms
         
