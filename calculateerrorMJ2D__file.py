@@ -2,7 +2,7 @@ import numpy as np
 from minimumJerkVelocity2D import minimumJerkVelocity2D
 
 def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
- """
+    """
     Calculates the error between predicted and actual trajectories in a 
     2D space based on the given parameters.
 
@@ -29,7 +29,7 @@ def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
         last_time = max([last_time, T0+D])
     # Adjust the last time point to align with the given time interval
     last_time = (last_time*(1/timedelta))/(1/timedelta)
-# If the last time is greater than the last time point in the given time array,
+    # If the last time is greater than the last time point in the given time array,
     # extend the time, velocity, and tangential velocity arrays with zeros
 
     if last_time > time[-1]:
@@ -45,8 +45,8 @@ def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
     predicted_x = np.zeros([numsubmovements, len(time)])
     predicted_y = np.zeros([numsubmovements, len(time)])
     predicted = np.zeros([numsubmovements, len(time)])
-#these variables were used in the Matlab code, we don't need them
-#but still left it for future change in code if needed
+    #these variables were used in the Matlab code, we don't need them
+    #but still left it for future change in code if needed
 
     # Jx = np.zeros([numsubmovements,4*numsubmovements, len(time)])
     # Jy = np.zeros([numsubmovements,4*numsubmovements, len(time)])
@@ -56,7 +56,7 @@ def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
     # Hy = np.zeros([numsubmovements,4*numsubmovements, len(time)])
     # H = np.zeros([numsubmovements,4*numsubmovements, len(time)])
 
-# Calculate predicted trajectories for each submovement
+    # Calculate predicted trajectories for each submovement
 
     for i in range(numsubmovements):
         T0 = parameters[i*4-4]
@@ -78,4 +78,4 @@ def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
     # Calculate the error between predicted and actual trajectories
     epsilon = np.sum((sumpredictedx - trajectory_x)**2 + (sumpredictedy - trajectory_y)**2 + (sumpredicted - tangvel)**2) / np.sum(sumtrajsq)
  
- return(epsilon)
+    return(epsilon)
