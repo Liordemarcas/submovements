@@ -1,6 +1,7 @@
 import numpy as np
 from minimumJerkVelocity2D__file import min_jerk_velocity_2D
 
+
 def calculate_error_MJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
     """
     Calculates the error between predicted and actual trajectories in a 
@@ -41,9 +42,11 @@ def calculate_error_MJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
     trajectory_x = vel[:,0]
     trajectory_y = vel[:,1]
 
+
     predicted_x = np.zeros([n_sub_movement, len(time)])
     predicted_y = np.zeros([n_sub_movement, len(time)])
     predicted = np.zeros([n_sub_movement, len(time)])
+
     #these variables were used in the Matlab code, we don't need them
     #but still left it for future change in code if needed
 
