@@ -3,7 +3,7 @@ import re
 import numpy as np
 from scipy.signal import filtfilt, butter
 
-def loaddata(dirname):
+def load_data(dirname):
     """
     Loads data from CSV files in the specified directory.
 
@@ -30,10 +30,10 @@ def loaddata(dirname):
 # Extract block and trial information from file names
     blocks = []
     trials = []
-    filenames = []
-    for filename in csv_files:
-        filenames.append(filename)
-        match = re.search(r'tb_.*block(\d*)_trial(\d*).csv', filename) #checking for correct file name
+    file_names = []
+    for file_name in csv_files:
+        file_names.append(file_name)
+        match = re.search(r'tb_.*block(\d*)_trial(\d*).csv', file_name) #checking for correct file name
         block = int(match.group(1))
         trial = int(match.group(2))
         blocks.append(block)

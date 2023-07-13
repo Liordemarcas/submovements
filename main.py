@@ -1,7 +1,7 @@
 
 # Step 1: load the data
-from loaddata import loaddata
-position_filtered, velocity, time = loaddata('data/subject08day1pre')
+from loaddata import load_data
+position_filtered, velocity, time = load_data('data/subject08day1pre')
 # Step 1 is finished. We're able to load all CSVs from a directory
 
 

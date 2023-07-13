@@ -77,3 +77,5 @@ def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
    
     # Calculate the error between predicted and actual trajectories
     epsilon = np.sum((sumpredictedx - trajectory_x)**2 + (sumpredictedy - trajectory_y)**2 + (sumpredicted - tangvel)**2) / np.sum(sumtrajsq)
+ 
+ return(epsilon)
