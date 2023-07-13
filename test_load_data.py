@@ -1,7 +1,4 @@
-import os
-import re
 import numpy as np
-from scipy.signal import filtfilt, butter
 from loaddata import loaddata
 
 def test_no_csv_files():
