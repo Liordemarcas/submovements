@@ -1,55 +1,33 @@
-"""
-% PLOTPOSITION - plot the position data
-% 
-% plotposition(position,time,plottype)
-%
-% plottype = 1 (default) -> x vs y
-% plottype = 2           -> time vs x/y
 
-function plotposition(position,time,plottype)
-
-if nargin<3
-    plottype=1;
-end
-
-figure;
-cols = ceil(sqrt(numel(position)));
-rows = ceil(numel(position) / cols);
-
-for k=1:numel(position)
-        subplot(rows,cols,k);
-        if plottype==1
-            plot(position{k}(:,1),position{k}(:,2));
-            axis equal
-        elseif plottype==2
-            plot(time{k},position{k});
-            if k==numel(position)
-                legend('x','y');
-            end
-        else
-            error('Unknown plot type');
-        end
-end
-"""
 
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 def plot_position(position, time, plot_type=1):
-    """This function can plot the time against different position type. 
-    plot_Type = 1 is time against x & y position 
-    plot_type = 2 is time against tanginal position """
-    
+        """
+    Plot the position data against time.
+
+    Parameters:
+        position (list): List of position data arrays.
+        time (list): List of time data arrays.
+        plot_type (int, optional): Type of plot to generate. Default is 1.
+            - plot_type = 1: Time vs. x & y position.
+            - plot_type = 2: Time vs. tangential position.
+
+    Raises:
+        ValueError: If the plot_type is unknown.
+
+    """
     if plot_type not in [1, 2]:
         raise ValueError('Unknown plot type')
 
     num_positions = len(position)
     cols = int(np.ceil(np.sqrt(num_positions)))
     rows = int(np.ceil(num_positions / cols))
-
+#create demo figure with num subplots correlated with num of trials in data
     fig, axs = plt.subplots(rows, cols)
-
+#inserting each trial to a subplot
     for k in range(num_positions):
         if isinstance(axs, np.ndarray):
             ax = axs[k // cols, k % cols]
@@ -70,46 +48,22 @@ def plot_position(position, time, plot_type=1):
 
 
 
-"""
-% PLOTVELOCITY - plot the velocity data
-% 
-% plotvelocity(velocity,time,plottype)
-%
-% plottype = 1 (default) -> time vs v_x/v_y
-% plottype = 2           -> time vs tangential velocity
-
-function plotvelocity(velocity,time,plottype)
-
-if nargin<3
-    plottype=1;
-end
-
-figure;
-cols = ceil(sqrt(numel(velocity)));
-rows = ceil(numel(velocity) / cols);
-
-for k=1:numel(velocity)
-        subplot(rows,cols,k);
-        if plottype==1
-            plot(time{k},velocity{k});
-            if k==numel(velocity)
-                legend('v_x','v_y');
-            end
-        elseif plottype==2
-            tangvel = sqrt(sum(velocity{k}.^2,2));
-            plot(time{k},tangvel);
-        else
-            error('Unknown plot type');
-        end
-end
-
-
-"""
 
 def plot_velocity(velocity, time, plot_type=1):
-    """This function can plot the time against different position type. 
-    plot_Type = 1 is time against x & y position 
-    plot_type = 2 is time against tanginal position """
+    """
+    Plot the velocity data against time.
+
+    Parameters:
+        velocity (list): List of velocity data arrays.
+        time (list): List of time data arrays.
+        plot_type (int, optional): Type of plot to generate. Default is 1.
+            - plot_type = 1: Time vs. v_x & v_y velocity.
+            - plot_type = 2: Time vs. tangential velocity.
+
+    Raises:
+        ValueError: If the plot_type is unknown.
+
+    """
     
     if plot_type not in [1, 2]:
         raise ValueError('Unknown plot type')
@@ -117,9 +71,10 @@ def plot_velocity(velocity, time, plot_type=1):
     num_velocity = len(velocity)
     cols = int(np.ceil(np.sqrt(num_velocity)))
     rows = int(np.ceil(num_velocity / cols))
+#create demo figure with num subplots correlated with num of trials in data
 
     fig, axs = plt.subplots(rows, cols)
-
+#inserting each trial to a subplot
     for k in range(num_velocity):
         if isinstance(axs, np.ndarray):
             ax = axs[k // cols, k % cols]
