@@ -65,7 +65,6 @@ def loaddata(dirname):
 
     max_block = max(blocks)
     max_trial = max(trials)
-# we're all good up to here
     position_filtered = []
     velocity = []
     time = []
@@ -91,3 +90,5 @@ def loaddata(dirname):
             velocity.append(_velocity)
 
     return position_filtered, velocity, time
+
+    ## Notes: - 1. change y axis 2. understand how to leave all figures open.

@@ -58,6 +58,16 @@ k=1;
 % Q: how many parameters are there in total?
 % Q: What are the units of the parameters?
 
+## decomposeD2 is relying on calculateerrorMJ2D which relays on minimumJerkVelocity2D.
+
+
+
+
+
+
+
+
+
 %% Step 5: Plot the result
 
 % velocity

@@ -1,44 +1,3 @@
-"""
-function [epsilon,grad,hess,sumpredicted,predictedx,predictedy] = calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta)
-% CALCULATEERRORMJ2D - calculate the error between the predicted and actual profile (in 2D)
-% The predicted trajectory consists of the superposition of one or more minimum jerk velocity profiles
-%
-% [epsilon,grad,hess,sumpredicted,predictedx,predictedy] =  calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta)
-%
-% The error is defined by (xvel - xpred)^2 + (yvel-ypred)^2 + (tangvel - tangpred)^2
-%
-% The function also optionally returns the gradient and Hessian
-% (first-order and second-order partial derivatives), for use with
-% optimization routines
-%
-% It can also optionally return the predicted minimum jerk trajectory
-% (resulting from the superposition of the submovements)
-%
-% The parameters should be of length 4 * N (where N is the number submovements)
-% each 4 parameters is T0 (onset time in seconds), D (duration in seconds),
-% Ax (x amplitude) and Ay (y amplitude)
-%
-% time should be a 1 * N vector with the time of the recorded movement (in seconds)
-%
-% vel should be an N * 2 vector with the x and y velocities
-%
-% tangvel should contain the tangential velocity [i.e. tangvel = sqrt(vel(:,1).^2+vel(:,2).^2)  ]
-%
-% timedelta (optional, default = 0.005) is the time points to evaluate and
-% compare the trajectories. It should match the time data [i.e. timedelta=time(2) - time(1)   ]
-
-% Jason Friedman, 2021
-% www.curiousjason.com
-    we need to give 5 arguments to minimumjerk (
-    to = start of submovment - one number
-    d = duration of submovments
-    ax = one value - the sum of change that occured from the movement, x axis
-    ay = one value - the sum of change that occured from the movement, y axis
-    t = vector (row) of times 
-
-    error - int.
-"""
-
 import numpy as np
 from minimumJerkVelocity2D import minimumJerkVelocity2D
 
@@ -55,8 +14,7 @@ def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
         last_time = max([last_time, T0+D])
 
     last_time = (last_time*(1/timedelta))/(1/timedelta)
-    # last_time = np.ceil(a) if a % 1 >= 0.5 else round (a)
-
+    
     if last_time > time[-1]:
         new_time = np.arange(time[-1], last_time + timedelta, timedelta)
         time = np.concatenate((time[:-1], new_time))
@@ -84,10 +42,7 @@ def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
         Dx = parameters[i*4-2]
         Dy = parameters[i*4-1]
 
-        thisrgn = np.where((time > T0) & (time < T0+D))[0]
-
-        # if nargout == 1:
-   
+        thisrgn = np.where((time > T0) & (time < T0+D))[0]   
         predicted_x[i,thisrgn], predicted_y[i,thisrgn], predicted[i,thisrgn] = minimumJerkVelocity2D(T0, D, Dx, Dy, time[thisrgn])
 
     
@@ -98,7 +53,6 @@ def calculateerrorMJ2D(parameters,time,vel,tangvel,timedelta = 0.005):
     sumtrajsq = sum(trajectory_x**2 + trajectory_y**2 + tangvel**2)
 
     epsilon = np.sum((sumpredictedx - trajectory_x)**2 + (sumpredictedy - trajectory_y)**2 + (sumpredicted - tangvel)**2) / np.sum(sumtrajsq)
-    print('epsilon',epsilon)
 
 
 
