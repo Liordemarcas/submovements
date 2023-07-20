@@ -42,8 +42,6 @@ def plotSubmovements2D(parameters,x0,y0,plottype = 1,t = None):
 
         vx[isub,:], vy[isub,:], _ = minimumJerkVelocity2D(t0[isub],D[isub], Ax [isub], Ay[isub],t)
     
-
-
     print('vx')
     print(vx)
     print('vy')
