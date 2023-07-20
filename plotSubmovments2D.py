@@ -10,7 +10,6 @@ def plotSubmovements2D(parameters,x0,y0,plottype = 1,t = None):
 
     numsubmovements = int(len(parameters)/4)
 
-
     t0 = parameters[:, 0]
     D = parameters[:, 1]
     Ax = parameters[:, 2]
