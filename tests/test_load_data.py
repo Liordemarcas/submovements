@@ -2,7 +2,7 @@ import numpy as np
 from loaddata import load_data
 
 def test_no_csv_files():
-    dirname = "path/to/empty/directory"
+    dirname ='data'
     try:
         load_data(dirname)
         assert False, "Expected ValueError"
@@ -10,7 +10,7 @@ def test_no_csv_files():
         assert str(e) == 'Must specify a directory to load the csv files from'
 
 def test_valid_input():
-    dirname = "path/to/csv/files/directory"
+    dirname = "data"
     try:
         result = load_data(dirname)
         assert isinstance(result, tuple)
@@ -21,7 +21,7 @@ def test_valid_input():
         assert False, "Unexpected ValueError"
 
 def test_data_loading():
-    dirname = "path/to/csv/files/directory"
+    dirname = "data"
     try:
         position_filtered, velocity, time = load_data(dirname)
         assert len(position_filtered) > 0
