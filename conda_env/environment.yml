@@ -1,0 +1,9 @@
+name: submovements
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - scipy
+  - matplotlib
+  - ipykernel
+prefix: C:\ProgramData\Anaconda3\envs\submovements

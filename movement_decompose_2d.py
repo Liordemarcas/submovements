@@ -1,12 +1,12 @@
 """ module movement_decompose_2d
-A module to decompuse a 2d movement to multiple submoments
+A module to decompose a 2d movement to multiple submovments
 Contain the following functions:
     load_data            - read a folder full of csv files, 
                            collect movements position, velocities & recorded time
     plot_position        - plot movement position in time
     plot_velocity        - plot movement velocity in time
     decompose_2D         - estimate submovments parameters from movement
-    plot_submovements_2D - plot the exected velocities from submovment group
+    plot_submovements_2D - plot the expected velocities from submovment group
 Made By:
 Omer Ophir:             https://github.com/omerophir
 Omri FK:                https://github.com/OmriFK
@@ -87,7 +87,7 @@ def load_data(dir_name):
             _position_filtered = filtfilt(b, a, position, axis=0)
             _velocity = np.vstack([[0, 0], np.diff(_position_filtered, axis=0) / dt])
 
-            #orgenaizing the data in correct variables for future functions
+            #organizing the data in correct variables for future functions
             time.append(_time)
             position_filtered.append(_position_filtered)
             velocity.append(_velocity)
@@ -198,7 +198,7 @@ def decompose_2D(time: np.ndarray,vel: np.ndarray,
 
     best_parameters contains the function parameters corresponding to the best values
     [start_t, movment_duration, displace_x, displace_y]. 
-    If there are multiple submovements, each submovement is in diffrent row.
+    If there are multiple submovements, each submovement is in different row.
 
     best_velocity is the velocity profile coresponding to the best values (UNIMPLANTED!!!)
 
@@ -226,29 +226,29 @@ def decompose_2D(time: np.ndarray,vel: np.ndarray,
         raise ValueError('Lower bounds exceed upper bound - infeasible')
 
     # initiate matrices for parameters and bounds for each submovment
-    parm_per_sub = 4 # hard coded - can be change if diffrent methods are used
+    parm_per_sub = 4 # hard coded - can be change if different methods are used
     init_parm = np.empty(shape=(n_sub_movement,parm_per_sub),dtype=float) # submovement parameters
     all_lower_bounds = np.empty(shape=(n_sub_movement,parm_per_sub),dtype=float) # lower bound for each parameter
     all_upper_bounds = np.empty(shape=(n_sub_movement,parm_per_sub),dtype=float) # upper bound for each parameter
 
-    # initate best error found
+    # initiate best error found
     best_error = np.inf
 
     # try optimazation 20 times, select the time with least error
     for _ in range(20):
-        # create inital parameters for each submovement
+        # create initial parameters for each submovement
         for iSub in range(n_sub_movement):
             init_parm[iSub,:] = lower_bounds + (upper_bounds - lower_bounds)*np.random.rand(1,parm_per_sub)
             all_upper_bounds[iSub,:] = upper_bounds.copy()
             all_lower_bounds[iSub,:] = lower_bounds.copy()
             all_lower_bounds[iSub,0] = (iSub) * 0.167
 
-        # function to minimaize
+        # function to minimize
         def error_fun(parms):
             epsilon = _calculate_error_MJ2D(parms, time, vel, tang_vel)
             return epsilon
 
-        # run the optimazer
+        # run the optimizer
         res = minimize(error_fun,
                        x0=init_parm.flatten(),
                        method='trust-constr',
@@ -263,22 +263,22 @@ def decompose_2D(time: np.ndarray,vel: np.ndarray,
             best_error = epsilon
             best_parameters = res.x
 
-    # orginaze parameters to so every submovment is a row
+    # organize parameters to so every submovment is a row
     final_parms = best_parameters.reshape((n_sub_movement,parm_per_sub))
 
     return best_error, final_parms
 
 def plot_submovements_2D(parameters, t: np.ndarray = None, plot_type: int = 1) -> tuple[plt.axes, plt.figure]:
     """
-    PLOTSUBMOVEMENTS2D - plot 2D submovements after decomposition
+    plot_submovements_2D - plot 2D submovements after decomposition
 
-    plotSubmovements2D(parameters,t,plottype,x0,y0)
+    plot_submovements_2D(parameters,t,plot_type,x0,y0)
 
     The parameters should in sets of 4 for each submovement:
     [start_t, movment_duration, displace_x, displace_y]
 
 
-    plottype:
+    plot_type:
     1 = time vs submovement velocity + sum velocity (default)
     2 = time vs submovement velocity 
     3 = time vs submovement position - extra parameters (x0,y0) specifies the start 
@@ -291,7 +291,7 @@ def plot_submovements_2D(parameters, t: np.ndarray = None, plot_type: int = 1) -
         raise ValueError('The parameters vector must have a length that is a multiple of 4')
 
     # parse inputs
-    numsubmovements = parameters.shape[0] # each submovment is in a diffrent row
+    numsubmovements = parameters.shape[0] # each submovment is in a different row
     start_t      = parameters[:, 0]
     movment_dur  = parameters[:, 1]
     displace_x   = parameters[:, 2]
@@ -338,7 +338,7 @@ def plot_submovements_2D(parameters, t: np.ndarray = None, plot_type: int = 1) -
     # display the figure
     #plt.show()
 
-    # return axe & figure for later ploting
+    # return axe & figure for later plotting
     return axs, fig
 
 def _calculate_error_MJ2D(parameters: np.ndarray,time: np.ndarray,
@@ -427,7 +427,7 @@ def _minimum_jerk_velocity_2D(start_t: float,movment_dur: float,
                               displace_x: float,displace_y: float,
                               t: np.ndarray) -> tuple[np.ndarray,np.ndarray,np.ndarray]:
     """
-    minimumJerkVelocity2D - evaluate a minimum jerk velocity curve with seperate displacement for x / y
+    minimumJerkVelocity2D - evaluate a minimum jerk velocity curve with separate displacement for x / y
 
     see Flash and Hogan (1985) for details on the minimum jerk equation
 
@@ -450,7 +450,7 @@ def _minimum_jerk_velocity_2D(start_t: float,movment_dur: float,
     normlized_time = (t - start_t)/movment_dur
     logical_movement = (normlized_time >= 0) & (normlized_time <= 1)
 
-    # normalise displacment to movment duration
+    # normalise displacement to movment duration
     norm_disp_x = displace_x/movment_dur
     norm_disp_y = displace_y/movment_dur
     tang_norm_disp = np.sqrt(norm_disp_x**2 + norm_disp_y**2)
