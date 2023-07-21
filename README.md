@@ -25,7 +25,9 @@ In it:
  * plot movements using "plot_position" or "plot_velocity"
  * decompose to submovments using "decompose_2D"
  * plot the submovments using "plot_submovements_2D".
-
+\
+\
+You can found example data in "data" folder.\
 You can see a full example run in "run_example.ipynb".
 # Contributors
  * Omer Ophir:             https://github.com/omerophir
