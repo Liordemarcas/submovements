@@ -29,11 +29,11 @@ def minimumJerkVelocity2D(t0: float,D: float,Ax: float,Ay: float,t: np.ndarray):
     r = (nt >= 0) & (nt <= 1)
 
     # make Bx, By & B that are zero outside of calculated area
-    Bx = By = B = np.zeros(t.size)
+    Bx = np.zeros(t.size)
+    By = np.zeros(t.size)
+    B  = np.zeros(t.size)
 
-    # calcu
-
-
+    # calculate velocities
     Bx[r] = Ax/D * (-60 * nt[r]**3 + 30 * nt[r]**4 + 30 * nt[r]**2)
     By[r] = Ay/D * (-60 * nt[r]**3 + 30 * nt[r]**4 + 30 * nt[r]**2)
 
